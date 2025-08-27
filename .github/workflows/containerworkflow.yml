@@ -16,9 +16,13 @@ jobs:
     uses: ./.github/workflows/semgrep.yml
     secrets:
       SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+  
+  call-unit-tests:
+    needs: call-semgrep-scan
+    uses: ./.github/workflows/unit-testworkflow.yml
 
   build-deploy-image:
-      needs: call-semgrep-scan
+      needs: call-unit-tests
       runs-on: ubuntu-latest
       
       steps:
