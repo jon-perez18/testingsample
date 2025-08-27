@@ -36,21 +36,26 @@ jobs:
       - run: docker build . -t ${{ env.IMAGE_NAME }}
       - run: docker push ${{ env.IMAGE_NAME }}
 
-  call-unit-tests:
-      needs: build-deploy-image
-      uses: ./.github/workflows/unit-testworkflow.yml
+      - name: Create Artifact
+        run: |
+          mkdir -p output
+          echo "Build info for ${{ github.sha }}" > output/build-info.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: build-artifact
+          path: output/
+
   
   deploy-to-aks:
   
-    needs: call-unit-tests
+    needs: build-deploy-image
     
     runs-on: ubuntu-latest
     
     # if: github.ref == 'refs/heads/master'
-    
     environment: PROD
-    #env:
-      #NAMESPACE: dummy
     
     steps:
     
@@ -63,10 +68,6 @@ jobs:
         cluster-name: ${{ secrets.AKS_NAME }}
         resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
   
-    # Create namespace if doesn't exist
-    # - run: |
-    #    kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
-  
     # Create image pull secret for ACR
     - uses: azure/k8s-create-secret@v1
       with:
@@ -74,7 +75,6 @@ jobs:
         container-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID }}
         container-registry-password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }}
         secret-name: ${{ secrets.AKS_SECRET }}
-        # namespace: ${{ env.NAMESPACE }}
   
     # Deploy app to AKS
     - uses: azure/k8s-deploy@v1
@@ -86,8 +86,7 @@ jobs:
           ${{ env.IMAGE_NAME }}
         imagepullsecrets: |
           ${{ secrets.AKS_SECRET }}
-        #namespace: ${{ env.NAMESPACE }}
-        
+
   trigger-release-upload:
     needs: build-deploy-image
     uses: ./.github/workflows/upload-release.yml
