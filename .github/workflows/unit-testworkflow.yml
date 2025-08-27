@@ -19,13 +19,13 @@ jobs:
         dotnet-version: 9.0.x
         
     - name: Restore dependencies
-      run: dotnet restore ./testingsample.sln
+      run: dotnet restore ./myWebApp.csproj
       
     - name: Build
-      run: dotnet build ./testingsample.sln --no-restore
+      run: dotnet build ./myWebApp.csproj --no-restore
       
     - name: Test
-      run: dotnet test ./testingsample.sln --logger trx --filter FullyQualifiedName\!~IntegrationTests --results-directory "TestResults"
+      run: dotnet test ./myWebApp.csproj --logger trx --filter FullyQualifiedName\!~IntegrationTests --results-directory "TestResults"
 
     - name: Upload test results
       uses: actions/upload-artifact@v4.6.2
