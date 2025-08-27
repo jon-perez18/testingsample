@@ -87,3 +87,9 @@ jobs:
         imagepullsecrets: |
           ${{ secrets.AKS_SECRET }}
         #namespace: ${{ env.NAMESPACE }}
+        
+  trigger-release-upload:
+    needs: build-deploy-image
+    uses: ./.github/workflows/upload-release.yml
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
