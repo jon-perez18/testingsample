@@ -28,7 +28,7 @@ jobs:
       run: dotnet test --logger trx --filter FullyQualifiedName\!~IntegrationTests --results-directory "TestResults"
 
     - name: Upload test results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4.6.2
       if: ${{ always() }}
       with:
         name: test-results
