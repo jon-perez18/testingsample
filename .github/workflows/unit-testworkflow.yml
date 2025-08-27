@@ -22,7 +22,7 @@ jobs:
       run: dotnet restore ./testingsample.sln
       
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ./testingsample.sln --no-restore
       
     - name: Test
       run: dotnet test ./testingsample.sln --logger trx --filter FullyQualifiedName\!~IntegrationTests --results-directory "TestResults"
