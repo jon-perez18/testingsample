@@ -25,7 +25,7 @@ jobs:
       run: dotnet build ./myWebApp.csproj --no-restore
       
     - name: Test
-      run: dotnet test ./myWebApp.csproj --logger trx --filter FullyQualifiedName\!~IntegrationTests --results-directory "TestResults"
+      run: dotnet test dotnet test .\WebApp.Tests\WebApp.Tests.csproj --logger trx --filter FullyQualifiedName\!~IntegrationTests --results-directory "TestResults"
 
     - name: Upload test results
       uses: actions/upload-artifact@v4.6.2
